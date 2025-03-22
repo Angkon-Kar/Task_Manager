@@ -1,14 +1,14 @@
-class TaskManager{
-    constructor(){
-        this.tasks = JSON(localStorage.getItem("tasks")) || [];
+class TaskManager {
+    constructor() {
+        this.tasks = JSON.parse(localStorage.getItem("tasks")) || [];
     }
 
-    saveTasks(){
+    saveTasks() {
         localStorage.setItem("tasks", JSON.stringify(this.tasks));
     }
 
-    addTask(title, description, priority){
-        if(!title.trim()){
+    addTask(title, description, priority) {
+        if (!title.trim()) {
             console.error("Task Title Cannot be Empty");
             return;
         }
@@ -26,47 +26,45 @@ class TaskManager{
         this.saveTasks();
     }
 
-    deleteTask(taskID) {
-        this.tasks = this.tasks.filter(task => task.id !== taskID);
+    deleteTask(taskId) {
+        this.tasks = this.tasks.filter(task => task.id !== taskId);
         this.saveTasks();
     }
 
     updateTask(taskId, updates) {
-        this.tasks = this.tasks.map(task => task.id === taskID ?
-            { ...task, ...updates} : task
+        this.tasks = this.tasks.map(task => 
+            task.id === taskId ? { ...task, ...updates } : task
         );
         this.saveTasks();
     }
 
-    toggleTaskCompletion(taskID){
+    toggleTaskCompletion(taskId) {
         this.tasks = this.tasks.map(task =>
-            task.it === taskID ? {...task, completed: !task.completed} : task
+            task.id === taskId ? { ...task, completed: !task.completed } : task
         );
         this.saveTasks();
     }
 
-    filterTasks(status){
+    filterTasks(status) {
         return this.tasks.filter(task => 
-            status === "all" ? true : completed === (status === "completed")
+            status === "all" ? true : task.completed === (status === "completed")
         );
     }
 
-    sortTasks(by){
-        if(by === "priority"){
-            this.tasks.sort((a,b) => a.priority.localCompare(b.priority));
-        }
-        else if (by === "date"){
-            this.tasks.sort((a,b) => new Date(a.createdAt) - new Date(b.createdAt));
+    sortTasks(by) {
+        if (by === "priority") {
+            this.tasks.sort((a, b) => a.priority.localeCompare(b.priority));
+        } else if (by === "date") {
+            this.tasks.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
         }
         this.saveTasks();
     }
 
-    searchTasks(query){
+    searchTasks(query) {
         return this.tasks.filter(task =>
-            task.title.toLowercase().includes(query.toLowercase())
+            task.title.toLowerCase().includes(query.toLowerCase())
         );
     }
-
 }
 
 const taskManager = new TaskManager();
