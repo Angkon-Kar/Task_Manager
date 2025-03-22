@@ -1,31 +1,50 @@
 // script.js
 
-// Ensure this runs after the page loads
 document.addEventListener("DOMContentLoaded", () => {
-    const taskManager = new TaskManager(); // Create instance of TaskManager
+    const taskManager = new TaskManager();
 
     // Select form elements
     const taskForm = document.getElementById("taskForm");
     const taskTitle = document.getElementById("taskTitle");
     const taskDescription = document.getElementById("taskDescription");
-    const taskPriority = document.querySelector("select"); // Select priority dropdown
+    const taskPriority = document.getElementById("taskPriority");
     const taskList = document.getElementById("taskList");
+    const filterTasks = document.getElementById("filterTasks");
+    const sortTasks = document.getElementById("sortTasks");
+    const searchTasks = document.getElementById("searchTasks");
 
-    // Function to display tasks in the UI
+    // Function to display tasks based on filters, sorting, and search
     function displayTasks() {
-        taskList.innerHTML = ""; // Clear existing tasks
+        taskList.innerHTML = "";
 
-        const tasks = taskManager.tasks; // Get tasks from local storage
-        tasks.forEach(task => {
+        let filteredTasks = taskManager.tasks;
+
+        // Apply filtering
+        const filterValue = filterTasks.value;
+        if (filterValue !== "all") {
+            filteredTasks = taskManager.filterTasks(filterValue);
+        }
+
+        // Apply sorting
+        const sortValue = sortTasks.value;
+        taskManager.sortTasks(sortValue);
+
+        // Apply search
+        const searchQuery = searchTasks.value.toLowerCase();
+        if (searchQuery) {
+            filteredTasks = taskManager.searchTasks(searchQuery);
+        }
+
+        filteredTasks.forEach(task => {
             const taskItem = document.createElement("div");
             taskItem.classList.add("task-item");
             if (task.completed) taskItem.classList.add("task-completed");
 
             taskItem.innerHTML = `
                 <div>
-                    <h3>${task.title}</h3>
-                    <p>${task.description}</p>
-                    <span>Priority: ${task.priority}</span>
+                    <strong>${task.title}</strong> - ${task.description}
+                    <span>(${task.priority})</span>
+                    <br><small>Due Date: ${task.dueDate || "No due date"}</small>
                 </div>
                 <div class="task-actions">
                     <button class="complete-btn" onclick="toggleCompletion(${task.id})">
@@ -39,10 +58,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Handle form submission (Add Task)
+    // Handle task submission
     taskForm.addEventListener("submit", (e) => {
         e.preventDefault();
-
         if (!taskTitle.value.trim()) {
             alert("Task title cannot be empty!");
             return;
@@ -51,22 +69,27 @@ document.addEventListener("DOMContentLoaded", () => {
         taskManager.addTask(taskTitle.value, taskDescription.value, taskPriority.value);
         taskTitle.value = "";
         taskDescription.value = "";
-        taskPriority.value = "low"; // Reset form
+        taskPriority.value = "low"; 
 
-        displayTasks(); // Refresh task list
+        displayTasks();
     });
 
-    // Mark task as completed/incomplete
+    // Mark task as complete/incomplete
     window.toggleCompletion = (taskId) => {
         taskManager.toggleTaskCompletion(taskId);
         displayTasks();
     };
 
-    // Delete a task
+    // Delete task
     window.deleteTask = (taskId) => {
         taskManager.deleteTask(taskId);
         displayTasks();
     };
+
+    // Apply filters, sorting, and search when user interacts
+    filterTasks.addEventListener("change", displayTasks);
+    sortTasks.addEventListener("change", displayTasks);
+    searchTasks.addEventListener("input", displayTasks);
 
     // Display tasks when the page loads
     displayTasks();
