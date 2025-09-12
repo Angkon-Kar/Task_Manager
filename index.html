@@ -1,52 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Task Management</title>
     <link rel="icon" type="image/x-icon" href="planning.png">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
     <div class="container">
-        <h1>Task Management</h1>
+        <header class="header">
+            <h1>Task Management</h1>
+            <div class="progress-wrapper">
+                <div class="progress-text">Progress: <span id="progressPercent">0%</span></div>
+                <div class="progress-bar" aria-hidden="true">
+                    <div id="progressFill" class="progress-fill"></div>
+                </div>
+            </div>
+        </header>
 
         <!-- Task Input Form -->
-        <form id="taskForm">
-            <input type="text" id="taskTitle" placeholder="Task Title" required>
+        <form id="taskForm" class="task-form">
+            <div class="form-row">
+                <input type="text" id="taskTitle" placeholder="Task Title" required />
+                <select id="taskCategory" title="Category">
+                    <option value="">General</option>
+                    <option value="Work">Work</option>
+                    <option value="Personal">Personal</option>
+                    <option value="Study">Study</option>
+                </select>
+            </div>
+
             <textarea id="taskDescription" placeholder="Task Description"></textarea>
-            <select id="taskPriority">
-                <option value="low">Low Priority</option>
-                <option value="medium">Medium Priority</option>
-                <option value="high">High Priority</option>
-            </select>
-            <input type="date" id="taskDueDate"> <!-- Due Date Field -->
-            <button type="submit">Add Task</button>
+
+            <div class="form-row">
+                <select id="taskPriority" aria-label="Priority">
+                    <option value="low">Low Priority</option>
+                    <option value="medium">Medium Priority</option>
+                    <option value="high">High Priority</option>
+                </select>
+
+                <input type="date" id="taskDueDate" />
+
+                <select id="taskRecurrence" title="Recurrence">
+                    <option value="none">No Recurrence</option>
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                </select>
+            </div>
+
+            <div class="form-row form-actions">
+                <div>
+                    <button type="submit" id="submitBtn">Add Task</button>
+                    <button type="button" id="cancelEditBtn" class="secondary hidden">Cancel</button>
+                </div>
+
+                <div class="export-import">
+                    <button type="button" id="exportBtn" class="secondary">Export</button>
+                    <button type="button" id="importBtn" class="secondary">Import</button>
+                    <input type="file" id="importFile" accept="application/json" class="hidden" />
+                </div>
+            </div>
         </form>
 
-        <!-- Task Controls (Filtering, Sorting, Searching) -->
+        <!-- Task Controls (Filtering, Sorting, Searching, Bulk) -->
         <div class="task-controls">
-            <label for="filterTasks">Filter Tasks:</label>
-            <select id="filterTasks">
-                <option value="all">All</option>
-                <option value="completed">Completed</option>
-                <option value="incomplete">Incomplete</option>
-            </select>
+            <div class="control-row">
+                <label>Filter:</label>
+                <select id="filterTasks">
+                    <option value="all">All</option>
+                    <option value="completed">Completed</option>
+                    <option value="incomplete">Incomplete</option>
+                </select>
 
-            <label for="sortTasks">Sort Tasks:</label>
-            <select id="sortTasks">
-                <option value="date">Sort by Date</option>
-                <option value="priority">Sort by Priority</option>
-            </select>
+                <label>Category:</label>
+                <select id="filterCategory">
+                    <option value="all">All</option>
+                    <option value="">General</option>
+                    <option value="Work">Work</option>
+                    <option value="Personal">Personal</option>
+                    <option value="Study">Study</option>
+                </select>
 
-            <input type="text" id="searchTasks" placeholder="Search tasks...">
+                <label>Sort:</label>
+                <select id="sortTasks">
+                    <option value="date">By Due Date</option>
+                    <option value="priority">By Priority</option>
+                    <option value="created">By Created</option>
+                </select>
+            </div>
+
+            <div class="control-row control-row-2">
+                <input type="text" id="searchTasks" placeholder="Search tasks..." />
+                <div class="bulk-actions">
+                    <button id="selectAllBtn" class="secondary">Select All</button>
+                    <button id="clearSelectionBtn" class="secondary">Clear</button>
+                    <button id="bulkCompleteBtn" class="secondary">Complete Selected</button>
+                    <button id="bulkDeleteBtn" class="danger">Delete Selected</button>
+                </div>
+            </div>
         </div>
 
         <!-- Task List Container -->
-        <div id="taskList"></div>
+        <div id="taskList" class="task-list" aria-live="polite"></div>
+
+        <footer class="footer">
+            <small>Built with ❤️ — local-only demo (no server)</small>
+        </footer>
     </div>
 
-    <!-- JavaScript Files (Ensure taskManager.js loads before script.js) -->
     <script src="taskManager.js"></script>
     <script src="script.js"></script>
 </body>
