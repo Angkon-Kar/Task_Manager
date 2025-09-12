@@ -243,7 +243,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (catFilter !== "all") {
             tasksToRender = tasksToRender.filter(t => t.category === catFilter);
         }
-        
+
         // apply search
         const q = searchTasks.value.trim();
         if (q) tasks = tasks.filter(t => (t.title + " " + t.description).toLowerCase().includes(q.toLowerCase()));
@@ -282,27 +282,24 @@ document.addEventListener("DOMContentLoaded", () => {
             const info = document.createElement("div");
             info.className = "task-info";
 
+            // Title
             const titleRow = document.createElement("div");
-            titleRow.className = "task-title";
+            titleRow.innerHTML = `<strong>${task.title}</strong>`;
 
-            const titleText = document.createElement("span");
-            titleText.textContent = task.title;
-            titleText.style.minWidth = 0;
-            titleRow.appendChild(titleText);
+            // Priority Badge
+            const priority = document.createElement("span");
+            priority.className = `priority-badge ${task.priority}`;
+            priority.textContent = task.priority.toUpperCase();
+            titleRow.appendChild(priority);
 
-            // priority badge
-            const pr = document.createElement("span");
-            pr.className = `badge priority-${task.priority}`;
-            pr.textContent = task.priority.toUpperCase();
-            titleRow.appendChild(pr);
-
-            // category
-            if (task.category) {
+            // Category Badge
+            if (task.category && task.category !== "none") {
                 const cat = document.createElement("span");
-                cat.className = "category-badge";
+                cat.className = `category-badge ${task.category}`;
                 cat.textContent = task.category;
                 titleRow.appendChild(cat);
             }
+
 
             info.appendChild(titleRow);
 
