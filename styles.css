@@ -96,3 +96,24 @@ button.danger { background:#ffebee; color:#c62828; border:1px solid #fbcaca; }
 
 /* small helpers */
 .small-muted { color:#666; font-size:12px; }
+
+/* Category Filter Dropdown */
+#filterCategory {
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+/* Colored options inside dropdown */
+#filterCategory option[value="Work"] {
+    color: #1976d2;
+    font-weight: bold;
+}
+#filterCategory option[value="Personal"] {
+    color: #9c27b0;
+    font-weight: bold;
+}
+#filterCategory option[value="Study"] {
+    color: #ff9800;
+    font-weight: bold;
+}
