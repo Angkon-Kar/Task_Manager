@@ -1,35 +1,49 @@
-// script.js
-
 document.addEventListener("DOMContentLoaded", () => {
     const taskManager = new TaskManager();
 
-    // Select form elements
     const taskForm = document.getElementById("taskForm");
     const taskTitle = document.getElementById("taskTitle");
     const taskDescription = document.getElementById("taskDescription");
     const taskPriority = document.getElementById("taskPriority");
+    const taskDueDate = document.getElementById("taskDueDate");
     const taskList = document.getElementById("taskList");
     const filterTasks = document.getElementById("filterTasks");
     const sortTasks = document.getElementById("sortTasks");
     const searchTasks = document.getElementById("searchTasks");
 
-    // Function to display tasks based on filters, sorting, and search
+    // Default form submit handler
+    const defaultSubmitHandler = (e) => {
+        e.preventDefault();
+        if (!taskTitle.value.trim()) {
+            alert("Task title cannot be empty!");
+            return;
+        }
+
+        taskManager.addTask(
+            taskTitle.value,
+            taskDescription.value,
+            taskPriority.value,
+            taskDueDate.value
+        );
+
+        taskForm.reset();
+        displayTasks();
+    };
+    taskForm.onsubmit = defaultSubmitHandler;
+
     function displayTasks() {
         taskList.innerHTML = "";
 
         let filteredTasks = taskManager.tasks;
 
-        // Apply filtering
         const filterValue = filterTasks.value;
         if (filterValue !== "all") {
             filteredTasks = taskManager.filterTasks(filterValue);
         }
 
-        // Apply sorting
         const sortValue = sortTasks.value;
         taskManager.sortTasks(sortValue);
 
-        // Apply search
         const searchQuery = searchTasks.value.toLowerCase();
         if (searchQuery) {
             filteredTasks = taskManager.searchTasks(searchQuery);
@@ -50,6 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <button class="complete-btn" onclick="toggleCompletion(${task.id})">
                         ${task.completed ? "Undo" : "Complete"}
                     </button>
+                    <button class="edit-btn" onclick="editTask(${task.id})">Edit</button>
                     <button class="delete-btn" onclick="deleteTask(${task.id})">Delete</button>
                 </div>
             `;
@@ -58,46 +73,54 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Handle task submission
-    taskForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        if (!taskTitle.value.trim()) {
-            alert("Task title cannot be empty!");
-            return;
-        }
-
-        taskManager.addTask(
-            taskTitle.value, 
-            taskDescription.value, 
-            taskPriority.value,
-            taskDueDate.value
-        );
-        taskTitle.value = "";
-        taskDescription.value = "";
-        taskPriority.value = "low"; 
-
-        displayTasks();
-    });
-
-    // Mark task as complete/incomplete
     window.toggleCompletion = (taskId) => {
         taskManager.toggleTaskCompletion(taskId);
         displayTasks();
     };
 
-    // Delete task
     window.deleteTask = (taskId) => {
-        taskManager.deleteTask(taskId);
-        displayTasks();
+        if (confirm("Are you sure you want to delete this task?")) {
+            taskManager.deleteTask(taskId);
+            displayTasks();
+        }
     };
 
-    // Apply filters, sorting, and search when user interacts
+    window.editTask = (taskId) => {
+        const task = taskManager.tasks.find(t => t.id === taskId);
+        if (!task) return;
+
+        // Pre-fill form
+        taskTitle.value = task.title;
+        taskDescription.value = task.description;
+        taskPriority.value = task.priority;
+        taskDueDate.value = task.dueDate !== "No due date" ? task.dueDate : "";
+
+        // Change button label
+        const submitBtn = taskForm.querySelector("button[type='submit']");
+        submitBtn.textContent = "Update Task";
+
+        // Override form submit
+        taskForm.onsubmit = (e) => {
+            e.preventDefault();
+
+            taskManager.updateTask(taskId, {
+                title: taskTitle.value,
+                description: taskDescription.value,
+                priority: taskPriority.value,
+                dueDate: taskDueDate.value || "No due date"
+            });
+
+            taskForm.reset();
+            submitBtn.textContent = "Add Task";
+            taskForm.onsubmit = defaultSubmitHandler;
+
+            displayTasks();
+        };
+    };
+
     filterTasks.addEventListener("change", displayTasks);
     sortTasks.addEventListener("change", displayTasks);
     searchTasks.addEventListener("input", displayTasks);
 
-    // Display tasks when the page loads
-    displayTasks(
-        
-    );
+    displayTasks();
 });
