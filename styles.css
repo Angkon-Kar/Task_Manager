@@ -70,7 +70,7 @@ button.danger { background:#ffebee; color:#c62828; border:1px solid #fbcaca; }
 .priority-high { background:#e53935; }
 .priority-medium { background:#fb8c00; }
 .priority-low { background:#43a047; }
-.category-badge { background:#1976d2; opacity:0.08; color:#17406a; padding:3px 8px; border-radius:999px; font-weight:600; }
+.category-badge { background:#30cdc7; color:#000000; padding:3px 8px; border-radius:999px; font-weight:600; }
 .badge-due { background:#6a1b9a; }
 .badge-today { background:#fdd835; color:#111; }
 
