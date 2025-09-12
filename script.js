@@ -238,12 +238,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // main render
     function render() {
-        // apply filters
-        let tasks = taskManager.filterTasks(filterTasks.value);
-        if (filterCategory.value && filterCategory.value !== "all") {
-            tasks = tasks.filter(t => (t.category || "") === filterCategory.value);
+        // Apply category filter
+        const catFilter = filterCategory.value;
+        if (catFilter !== "all") {
+            tasksToRender = tasksToRender.filter(t => t.category === catFilter);
         }
-
+        
         // apply search
         const q = searchTasks.value.trim();
         if (q) tasks = tasks.filter(t => (t.title + " " + t.description).toLowerCase().includes(q.toLowerCase()));
