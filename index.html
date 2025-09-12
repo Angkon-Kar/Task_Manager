@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Management</title>
+    <link rel="icon" type="image/x-icon" href="planning.png">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Task Management</h1>
+
+        <!-- Task Input Form -->
+        <form id="taskForm">
+            <input type="text" id="taskTitle" placeholder="Task Title" required>
+            <textarea id="taskDescription" placeholder="Task Description"></textarea>
+            <select id="taskPriority">
+                <option value="low">Low Priority</option>
+                <option value="medium">Medium Priority</option>
+                <option value="high">High Priority</option>
+            </select>
+            <input type="date" id="taskDueDate"> <!-- Due Date Field -->
+            <button type="submit">Add Task</button>
+        </form>
+
+        <!-- Task Controls (Filtering, Sorting, Searching) -->
+        <div class="task-controls">
+            <label for="filterTasks">Filter Tasks:</label>
+            <select id="filterTasks">
+                <option value="all">All</option>
+                <option value="completed">Completed</option>
+                <option value="incomplete">Incomplete</option>
+            </select>
+
+            <label for="sortTasks">Sort Tasks:</label>
+            <select id="sortTasks">
+                <option value="date">Sort by Date</option>
+                <option value="priority">Sort by Priority</option>
+            </select>
+
+            <input type="text" id="searchTasks" placeholder="Search tasks...">
+        </div>
+
+        <!-- Task List Container -->
+        <div id="taskList"></div>
+    </div>
+
+    <!-- JavaScript Files (Ensure taskManager.js loads before script.js) -->
+    <script src="taskManager.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
