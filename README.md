@@ -59,6 +59,8 @@ This project goes beyond a simple to-do list, providing categories, priorities, 
 - **Clone the repo**
 ```
 git clone https://github.com/Angkon-Kar/Task_Manager.git
+```
+```
 cd Task-Manager
 ```
 
@@ -96,3 +98,4 @@ cd Task-Manager
 
 - *This project is licensed under the* **[MIT License]**(https://github.com/Angkon-Kar/LICENSE?tab=MIT-1-ov-file).
 - *Feel free to use, modify, and distribute as you like.*
+
