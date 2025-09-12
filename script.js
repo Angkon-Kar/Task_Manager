@@ -97,5 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
     searchTasks.addEventListener("input", displayTasks);
 
     // Display tasks when the page loads
-    displayTasks();
+    displayTasks(
+        
+    );
 });

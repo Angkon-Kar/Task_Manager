@@ -34,7 +34,7 @@ body {
     font-size: 16px;
 }
 
-/* Task Controls (Filters, Sorting, Search) */
+/* Task Controls */
 .task-controls {
     display: flex;
     flex-direction: column;
@@ -76,7 +76,7 @@ body {
     opacity: 0.7;
 }
 
-/* Task Actions (Buttons) */
+/* Task Actions */
 .task-actions {
     display: flex;
     gap: 5px;
@@ -95,7 +95,6 @@ body {
     background-color: #4caf50;
     color: white;
 }
-
 .complete-btn:hover {
     background-color: #388e3c;
 }
@@ -105,11 +104,15 @@ body {
     background-color: #f44336;
     color: white;
 }
-
 .delete-btn:hover {
     background-color: #d32f2f;
 }
 
-.task-item[data-priority="high"] { border-left: 5px solid red; }
-.task-item[data-priority="medium"] { border-left: 5px solid orange; }
-.task-item[data-priority="low"] { border-left: 5px solid green; }
+/* Edit Button */
+.edit-btn {
+    background-color: #2196f3;
+    color: white;
+}
+.edit-btn:hover {
+    background-color: #1976d2;
+}
