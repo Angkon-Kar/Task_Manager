@@ -116,3 +116,13 @@ body {
 .edit-btn:hover {
     background-color: #1976d2;
 }
+
+.priority-badge {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    color: #fff;
+}
+.priority-high { background: red; }
+.priority-medium { background: orange; }
+.priority-low { background: green; }
