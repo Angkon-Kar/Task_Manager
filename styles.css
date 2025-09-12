@@ -70,29 +70,10 @@ button.danger { background:#ffebee; color:#c62828; border:1px solid #fbcaca; }
 .priority-high { background:#e53935; }
 .priority-medium { background:#fb8c00; }
 .priority-low { background:#43a047; }
-.category-badge {
-    padding: 3px 8px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 600;
-    margin-left: 6px; /* add spacing after priority */
-    display: inline-block;
-    color: #fff;
-}
-
+.category-badge { background:#1976d2; opacity:0.08; color:#17406a; padding:3px 8px; border-radius:999px; font-weight:600; }
 .badge-due { background:#6a1b9a; }
 .badge-today { background:#fdd835; color:#111; }
 
-/* Specific colors for categories */
-.category-badge.Work {
-    background-color: #1976d2; /* Blue */
-}
-.category-badge.Personal {
-    background-color: #9c27b0; /* Purple */
-}
-.category-badge.Study {
-    background-color: #ff9800; /* Orange */
-}
 /* Overdue */
 .task-overdue { border-left:6px solid rgba(244,67,54,0.12); background: linear-gradient(180deg,#fff7f7,#fffbfb); }
 .task-completed .task-title, .task-completed .task-desc { text-decoration: line-through; color:#97a0ad; opacity:0.8; }
@@ -115,24 +96,3 @@ button.danger { background:#ffebee; color:#c62828; border:1px solid #fbcaca; }
 
 /* small helpers */
 .small-muted { color:#666; font-size:12px; }
-
-/* Category Filter Dropdown */
-#filterCategory {
-    padding: 8px;
-    border-radius: 4px;
-    font-size: 14px;
-}
-
-/* Colored options inside dropdown */
-#filterCategory option[value="Work"] {
-    color: #1976d2;
-    font-weight: bold;
-}
-#filterCategory option[value="Personal"] {
-    color: #9c27b0;
-    font-weight: bold;
-}
-#filterCategory option[value="Study"] {
-    color: #ff9800;
-    font-weight: bold;
-}
