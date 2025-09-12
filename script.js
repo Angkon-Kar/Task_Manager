@@ -11,6 +11,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const sortTasks = document.getElementById("sortTasks");
     const searchTasks = document.getElementById("searchTasks");
 
+    <span class="priority-badge priority-${task.priority}">${task.priority}</span>
+
     // Default form submit handler
     const defaultSubmitHandler = (e) => {
         e.preventDefault();
