@@ -83,6 +83,16 @@ button.danger { background:#ffebee; color:#c62828; border:1px solid #fbcaca; }
 .badge-due { background:#6a1b9a; }
 .badge-today { background:#fdd835; color:#111; }
 
+/* Specific colors for categories */
+.category-badge.Work {
+    background-color: #1976d2; /* Blue */
+}
+.category-badge.Personal {
+    background-color: #9c27b0; /* Purple */
+}
+.category-badge.Study {
+    background-color: #ff9800; /* Orange */
+}
 /* Overdue */
 .task-overdue { border-left:6px solid rgba(244,67,54,0.12); background: linear-gradient(180deg,#fff7f7,#fffbfb); }
 .task-completed .task-title, .task-completed .task-desc { text-decoration: line-through; color:#97a0ad; opacity:0.8; }
