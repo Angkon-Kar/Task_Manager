@@ -171,6 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ⭐ Fix: Select only incomplete tasks
     selectAllBtn.addEventListener("click", () => {
+        // Only select tasks that are incomplete
         taskManager.tasks.filter(t => !t.completed).forEach(t => selectedIds.add(t.id));
         render(); // re-render to check boxes
     });
@@ -254,16 +255,13 @@ document.addEventListener("DOMContentLoaded", () => {
         // Start with ALL tasks for accurate sorting and filtering base
         let tasks = taskManager.filterTasks("all"); 
         
-        // ⭐ Fix: Filter out completed recurring tasks (which have generated their next instance)
+        // ⭐ CRITICAL FIX: Filter out completed recurring tasks (This is why High Priority tasks appeared to stay)
         tasks = tasks.filter(t => !(t.completed && t.recurrence !== 'none')); 
 
         // 2. Apply filters based on dropdown
         if (filterTasks.value === "completed") {
             tasks = tasks.filter(t => t.completed);
         } else if (filterTasks.value === "incomplete") {
-            // Note: This filter is only applied if "incomplete" is selected, 
-            // ensuring completed recurring tasks (which are now hidden) don't reappear 
-            // unless the filter is explicitly set to "completed".
             tasks = tasks.filter(t => !t.completed);
         }
 
