@@ -114,11 +114,20 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function isOverdue(task) {
-        if (!task.dueDate) return false;
-        const due = new Date(task.dueDate + "T23:59:59");
-        const now = new Date();
-        return !task.completed && due < now;
+        if (!task.dueDate || task.completed) return false;
+
+        // Due Date কে 'YYYY-MM-DD' থেকে Date অবজেক্টে রূপান্তর
+        const dueTime = new Date(task.dueDate).getTime(); 
+
+        // আজকের তারিখকে 'YYYY-MM-DD' তে রূপান্তর করে তার টাইমস্ট্যাম্প
+        // (তারিখের অংশ) বের করে তুলনা করুন।
+        const today = new Date().toISOString().slice(0, 10);
+        const todayTime = new Date(today).getTime();
+
+        // যদি ডিউ ডেট আজকের তারিখের আগে হয়, তাহলে ওভারডিউ।
+        return dueTime < todayTime; 
     }
+
     function isDueToday(task) {
         if (!task.dueDate) return false;
         const due = task.dueDate;
