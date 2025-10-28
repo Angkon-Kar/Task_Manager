@@ -311,6 +311,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 const desc = document.createElement("div");
                 desc.className = "task-desc";
                 desc.textContent = task.description;
+                // Add style to allow wrapping, overriding the nowrap from CSS on mobile
+                if (window.innerWidth < 600) {
+                    desc.style.whiteSpace = "normal";
+                }
                 info.appendChild(desc);
             }
 
