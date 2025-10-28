@@ -96,6 +96,7 @@ cd Task-Manager
 
 ## 📜 License
 
-- *This project is licensed under the* **[MIT License]**(https://github.com/Angkon-Kar/LICENSE?tab=MIT-1-ov-file).
+- *This project is licensed under the* **[MIT License](https://github.com/Angkon-Kar/LICENSE?tab=MIT-1-ov-file)**.
 - *Feel free to use, modify, and distribute as you like.*
+
 
