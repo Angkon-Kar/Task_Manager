@@ -239,7 +239,20 @@ document.addEventListener("DOMContentLoaded", () => {
     // main render
     function render() {
         // apply filters
-        let tasks = taskManager.filterTasks(filterTasks.value);
+        let tasks = taskManager.filterTasks("all"); // Start with ALL tasks
+        
+        // **⭐ NEW FILTERING RULE to hide completed recurring tasks ⭐**
+        // If a task is completed AND has recurrence (e.g., daily/weekly), we hide it 
+        // because its purpose was fulfilled when the new instance was created.
+        tasks = tasks.filter(t => !(t.completed && t.recurrence !== 'none')); 
+
+        // Apply completion status filter
+        if (filterTasks.value === "completed") {
+            tasks = tasks.filter(t => t.completed);
+        } else if (filterTasks.value === "incomplete") {
+            tasks = tasks.filter(t => !t.completed);
+        }
+
         if (filterCategory.value && filterCategory.value !== "all") {
             tasks = tasks.filter(t => (t.category || "") === filterCategory.value);
         }
@@ -311,10 +324,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 const desc = document.createElement("div");
                 desc.className = "task-desc";
                 desc.textContent = task.description;
-                // Add style to allow wrapping, overriding the nowrap from CSS on mobile
-                if (window.innerWidth < 600) {
-                    desc.style.whiteSpace = "normal";
-                }
                 info.appendChild(desc);
             }
 
