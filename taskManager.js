@@ -18,7 +18,7 @@ class TaskManager {
             throw new Error("Task title required");
         }
         const newTask = {
-            id: Date.now() + Math.floor(Math.random() * 1000),
+            id: Date.now() + Math.floor(Math.random() * 1000000), // simple unique id
             title: title.trim(),
             description: description.trim(),
             priority,
@@ -120,7 +120,7 @@ class TaskManager {
             const existingIds = new Set(this.tasks.map(t => t.id));
             imported.forEach(t => {
                 if (!t.id || existingIds.has(t.id)) {
-                    t.id = Date.now() + Math.floor(Math.random() * 1000);
+                    t.id = Date.now() + Math.floor(Math.random() * 1000000); // new unique id
                 }
                 this.tasks.push(t);
             });
