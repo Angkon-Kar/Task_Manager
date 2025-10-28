@@ -179,24 +179,23 @@ document.addEventListener("DOMContentLoaded", () => {
     bulkCompleteBtn.addEventListener("click", () => {
         if (!selectedIds.size) return;
         const ids = Array.from(selectedIds);
-        taskManager.bulkUpdate(ids, { completed: true });
-        // handle recurrence: for each completed with recurrence, the toggle logic in TaskManager won't run so we emulate next recurrence
-        ids.forEach(id => {
-            const t = taskManager.tasks.find(tt => tt.id === id);
-            if (t && t.recurrence && t.recurrence !== "none") {
-                const next = TaskManager._getNextDueDate(t.dueDate, t.recurrence);
-                if (next) {
-                    taskManager.addTask({
-                        title: t.title,
-                        description: t.description,
-                        priority: t.priority,
-                        dueDate: next,
-                        category: t.category,
-                        recurrence: t.recurrence
-                    });
-                }
-            }
+        
+        const idsToComplete = ids.filter(id => {
+            const task = taskManager.tasks.find(t => t.id === id);
+            return task && !task.completed;
         });
+
+        if (idsToComplete.length === 0) {
+            alert("No incomplete tasks selected to complete.");
+            selectedIds.clear();
+            render();
+            return;
+        }
+
+        idsToComplete.forEach(id => {
+            taskManager.toggleTaskCompletion(id);
+        });
+        
         selectedIds.clear();
         render();
     });
