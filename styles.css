@@ -86,12 +86,43 @@ button.danger { background:#ffebee; color:#c62828; border:1px solid #fbcaca; }
 .footer { margin-top:18px; text-align:center; color:#596673; font-size:13px; }
 
 /* Responsive */
-@media (max-width:720px) {
-    .header { flex-direction:column; align-items:flex-start; gap:8px; }
-    .progress-wrapper { width:100%; }
-    .form-row { flex-direction:column; align-items:stretch; }
-    .task-item { flex-direction:column; align-items:stretch; }
-    .control-row-2 { flex-direction:column; gap:8px; align-items:stretch; }
+
+@media (max-width: 600px) {
+    .container {
+        margin: 0; /* Full width on tiny screens */
+        padding: 12px;
+        border-radius: 0; /* Remove rounded corners for full screen immersion */
+        box-shadow: none;
+    }
+
+    .task-item {
+        /* Improve vertical stacking of action buttons */
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .task-actions {
+        /* Make action buttons full width and stack them */
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); /* 3 buttons evenly spaced */
+        gap: 8px; /* Reduce gap */
+        margin-top: 8px; /* Space from content */
+    }
+
+    .task-actions button {
+        width: 100%;
+    }
+
+    .control-row {
+        gap: 12px; /* Add some space between stacked controls */
+    }
+
+    /* Adjust bulk buttons to fit better */
+    .bulk-actions {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* Two buttons per row */
+        gap: 8px;
+    }
 }
 
 /* small helpers */
