@@ -1,4 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // Make sure taskManager.js is loaded before this script
+    if (typeof TaskManager === 'undefined') {
+        console.error("TaskManager class not found. Ensure taskManager.js is loaded first.");
+        return;
+    }
     const taskManager = new TaskManager();
 
     // Form elements
@@ -113,10 +118,11 @@ document.addEventListener("DOMContentLoaded", () => {
         updateBulkButtons();
     }
 
-    // ⭐ আপডেট: টাইম জোন নিরপেক্ষ ওভারডিউ লজিক
+    // ⭐ Fix: Timezone-independent Overdue Check
     function isOverdue(task) {
         if (!task.dueDate || task.completed) return false;
-        
+
+        // Compare dates only (YYYY-MM-DD) to avoid timezone issues
         const dueTime = new Date(task.dueDate).getTime(); 
         const today = new Date().toISOString().slice(0, 10);
         const todayTime = new Date(today).getTime(); 
@@ -163,8 +169,8 @@ document.addEventListener("DOMContentLoaded", () => {
         bulkDeleteBtn.disabled = !any;
     }
 
+    // ⭐ Fix: Select only incomplete tasks
     selectAllBtn.addEventListener("click", () => {
-        // Select only incomplete tasks
         taskManager.tasks.filter(t => !t.completed).forEach(t => selectedIds.add(t.id));
         render(); // re-render to check boxes
     });
@@ -173,12 +179,12 @@ document.addEventListener("DOMContentLoaded", () => {
         render();
     });
 
-    // ⭐ আপডেট: বাল্ক কমপ্লিট লজিক (রিকারেন্স ডুপ্লিকেশন ফিক্স)
+    // ⭐ Fix: Bulk Complete Logic (Recurrence Duplication Fix)
     bulkCompleteBtn.addEventListener("click", () => {
         if (!selectedIds.size) return;
         const ids = Array.from(selectedIds);
         
-        // শুধুমাত্র অসমাপ্ত (incomplete) টাস্কগুলোই সম্পূর্ণ করার জন্য ফিল্টার করা
+        // 1. Filter only incomplete tasks
         const idsToComplete = ids.filter(id => {
             const task = taskManager.tasks.find(t => t.id === id);
             return task && !task.completed;
@@ -190,7 +196,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // taskManager.toggleTaskCompletion ব্যবহার করা হচ্ছে, যা ডুপ্লিকেশন এড়াবে
+        // 2. Use toggleTaskCompletion which correctly handles recurrence without duplication
         idsToComplete.forEach(id => {
             taskManager.toggleTaskCompletion(id);
         });
@@ -248,13 +254,16 @@ document.addEventListener("DOMContentLoaded", () => {
         // Start with ALL tasks for accurate sorting and filtering base
         let tasks = taskManager.filterTasks("all"); 
         
-        // ⭐ আপডেট: সম্পন্ন হওয়া রিকারিং টাস্কগুলোকে ডিসপ্লে থেকে বাদ দেওয়া (Fixes 100% progress issue)
+        // ⭐ Fix: Filter out completed recurring tasks (which have generated their next instance)
         tasks = tasks.filter(t => !(t.completed && t.recurrence !== 'none')); 
 
         // 2. Apply filters based on dropdown
         if (filterTasks.value === "completed") {
             tasks = tasks.filter(t => t.completed);
         } else if (filterTasks.value === "incomplete") {
+            // Note: This filter is only applied if "incomplete" is selected, 
+            // ensuring completed recurring tasks (which are now hidden) don't reappear 
+            // unless the filter is explicitly set to "completed".
             tasks = tasks.filter(t => !t.completed);
         }
 
@@ -405,7 +414,6 @@ document.addEventListener("DOMContentLoaded", () => {
         updateBulkButtons();
     }
 
-    // updateProgress (Logic confirmed correct for 0 tasks)
     function updateProgress() {
         const all = taskManager.tasks.length;
         if (!all) {
