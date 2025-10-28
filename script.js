@@ -113,21 +113,17 @@ document.addEventListener("DOMContentLoaded", () => {
         updateBulkButtons();
     }
 
+    // ⭐ আপডেট: টাইম জোন নিরপেক্ষ ওভারডিউ লজিক
     function isOverdue(task) {
         if (!task.dueDate || task.completed) return false;
-
-        // Due Date কে 'YYYY-MM-DD' থেকে Date অবজেক্টে রূপান্তর
+        
         const dueTime = new Date(task.dueDate).getTime(); 
-
-        // আজকের তারিখকে 'YYYY-MM-DD' তে রূপান্তর করে তার টাইমস্ট্যাম্প
-        // (তারিখের অংশ) বের করে তুলনা করুন।
         const today = new Date().toISOString().slice(0, 10);
-        const todayTime = new Date(today).getTime();
+        const todayTime = new Date(today).getTime(); 
 
-        // যদি ডিউ ডেট আজকের তারিখের আগে হয়, তাহলে ওভারডিউ।
         return dueTime < todayTime; 
     }
-
+    
     function isDueToday(task) {
         if (!task.dueDate) return false;
         const due = task.dueDate;
@@ -168,7 +164,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     selectAllBtn.addEventListener("click", () => {
-        taskManager.tasks.forEach(t => selectedIds.add(t.id));
+        // Select only incomplete tasks
+        taskManager.tasks.filter(t => !t.completed).forEach(t => selectedIds.add(t.id));
         render(); // re-render to check boxes
     });
     clearSelectionBtn.addEventListener("click", () => {
@@ -176,22 +173,24 @@ document.addEventListener("DOMContentLoaded", () => {
         render();
     });
 
+    // ⭐ আপডেট: বাল্ক কমপ্লিট লজিক (রিকারেন্স ডুপ্লিকেশন ফিক্স)
     bulkCompleteBtn.addEventListener("click", () => {
         if (!selectedIds.size) return;
         const ids = Array.from(selectedIds);
         
+        // শুধুমাত্র অসমাপ্ত (incomplete) টাস্কগুলোই সম্পূর্ণ করার জন্য ফিল্টার করা
         const idsToComplete = ids.filter(id => {
             const task = taskManager.tasks.find(t => t.id === id);
             return task && !task.completed;
         });
 
         if (idsToComplete.length === 0) {
-            alert("No incomplete tasks selected to complete.");
             selectedIds.clear();
             render();
             return;
         }
 
+        // taskManager.toggleTaskCompletion ব্যবহার করা হচ্ছে, যা ডুপ্লিকেশন এড়াবে
         idsToComplete.forEach(id => {
             taskManager.toggleTaskCompletion(id);
         });
@@ -244,13 +243,12 @@ document.addEventListener("DOMContentLoaded", () => {
     sortTasks.addEventListener("change", render);
     searchTasks.addEventListener("input", render);
 
-    // main render (Updated to hide completed recurring tasks)
+    // main render
     function render() {
         // Start with ALL tasks for accurate sorting and filtering base
         let tasks = taskManager.filterTasks("all"); 
         
-        // 1. Filter out completed recurring tasks (which have generated their next instance)
-        // This is the key fix for the recurrence duplication display issue.
+        // ⭐ আপডেট: সম্পন্ন হওয়া রিকারিং টাস্কগুলোকে ডিসপ্লে থেকে বাদ দেওয়া (Fixes 100% progress issue)
         tasks = tasks.filter(t => !(t.completed && t.recurrence !== 'none')); 
 
         // 2. Apply filters based on dropdown
