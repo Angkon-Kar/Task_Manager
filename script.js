@@ -236,17 +236,16 @@ document.addEventListener("DOMContentLoaded", () => {
     sortTasks.addEventListener("change", render);
     searchTasks.addEventListener("input", render);
 
-    // main render
+    // main render (Updated to hide completed recurring tasks)
     function render() {
-        // apply filters
-        let tasks = taskManager.filterTasks("all"); // Start with ALL tasks
+        // Start with ALL tasks for accurate sorting and filtering base
+        let tasks = taskManager.filterTasks("all"); 
         
-        // **⭐ NEW FILTERING RULE to hide completed recurring tasks ⭐**
-        // If a task is completed AND has recurrence (e.g., daily/weekly), we hide it 
-        // because its purpose was fulfilled when the new instance was created.
+        // 1. Filter out completed recurring tasks (which have generated their next instance)
+        // This is the key fix for the recurrence duplication display issue.
         tasks = tasks.filter(t => !(t.completed && t.recurrence !== 'none')); 
 
-        // Apply completion status filter
+        // 2. Apply filters based on dropdown
         if (filterTasks.value === "completed") {
             tasks = tasks.filter(t => t.completed);
         } else if (filterTasks.value === "incomplete") {
@@ -400,6 +399,7 @@ document.addEventListener("DOMContentLoaded", () => {
         updateBulkButtons();
     }
 
+    // updateProgress (Logic confirmed correct for 0 tasks)
     function updateProgress() {
         const all = taskManager.tasks.length;
         if (!all) {
