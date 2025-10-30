@@ -37,7 +37,6 @@
             </div>
         </header>
 
-        <!-- Task Input Form -->
         <form id="taskForm" class="task-form">
             <div class="form-row">
                 <input type="text" id="taskTitle" placeholder="Task Title" required />
@@ -47,42 +46,32 @@
                     <option value="Personal">Personal</option>
                     <option value="Study">Study</option>
                 </select>
+                <button type="button" id="manageCategoryBtn" class="secondary" title="Manage Categories">⚙️</button> 
             </div>
 
             <textarea id="taskDescription" placeholder="Task Description"></textarea>
 
             <div class="form-row">
                 <select id="taskPriority" aria-label="Priority">
-                    <option value="low">Low Priority</option>
-                    <option value="medium">Medium Priority</option>
-                    <option value="high">High Priority</option>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
                 </select>
 
-                <input type="date" id="taskDueDate" />
+                <input type="date" id="taskDueDate" title="Due Date" />
 
-                <select id="taskRecurrence" title="Recurrence">
-                    <option value="none">No Recurrence</option>
+                <select id="taskRecurrence" aria-label="Recurrence">
+                    <option value="none">Does not repeat</option>
                     <option value="daily">Daily</option>
                     <option value="weekly">Weekly</option>
                     <option value="monthly">Monthly</option>
                 </select>
-            </div>
 
-            <div class="form-row form-actions">
-                <div>
-                    <button type="submit" id="submitBtn">Add Task</button>
-                    <button type="button" id="cancelEditBtn" class="secondary hidden">Cancel</button>
-                </div>
-
-                <div class="export-import">
-                    <button type="button" id="exportBtn" class="secondary">Export</button>
-                    <button type="button" id="importBtn" class="secondary">Import</button>
-                    <input type="file" id="importFile" accept="application/json" class="hidden" />
-                </div>
+                <button type="submit" id="submitBtn">Add Task</button>
+                <button type="button" id="cancelEditBtn" class="secondary hidden">Cancel Edit</button>
             </div>
         </form>
 
-        <!-- Task Controls (Filtering, Sorting, Searching, Bulk) -->
         <div class="task-controls">
             <div class="control-row">
                 <label>Filter:</label>
@@ -91,11 +80,13 @@
                     <option value="completed">Completed</option>
                     <option value="incomplete">Incomplete</option>
                 </select>
+                <span id="allCount" class="count-badge"></span>
+                <span id="completedCount" class="count-badge"></span>
+                <span id="overdueCount" class="count-badge"></span>
 
                 <label>Category:</label>
                 <select id="filterCategory">
                     <option value="all">All</option>
-                    <option value="">General</option>
                     <option value="Work">Work</option>
                     <option value="Personal">Personal</option>
                     <option value="Study">Study</option>
@@ -103,6 +94,7 @@
 
                 <label>Sort:</label>
                 <select id="sortTasks">
+                    <option value="custom">Custom Order</option> 
                     <option value="date">By Due Date</option>
                     <option value="priority">By Priority</option>
                     <option value="created">By Created</option>
@@ -118,22 +110,39 @@
                     <button id="bulkDeleteBtn" class="danger">Delete Selected</button>
                 </div>
             </div>
+            
+            <div class="control-row">
+                <button id="exportBtn" class="secondary">Export JSON</button>
+                <button id="importBtn" class="secondary">Import JSON</button>
+                <input type="file" id="importFile" accept="application/json" class="hidden" />
+            </div>
         </div>
 
-        <!-- Task List Container -->
         <div id="taskList" class="task-list" aria-live="polite"></div>
 
         <footer class="footer"> 
         <p>&copy; 2024 Task Management App</p>
         <p class="text-gray-400 text-sm">
             Made with <span class="text-red-500">&hearts;</span> by 
-            <a href="https://angkonkar.netlify.app/" target="_blank">Angkon Kar</a>
+            <a href="https://github.com/Angkon-Kar" target="_blank">Angkon-Kar</a>
         </p>
         </footer>
 
     </div>
 
+    <div id="categoryModal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Manage Categories</h3>
+            <input type="text" id="newCategoryInput" placeholder="New Category Name" />
+            <button id="addCategoryBtn">Add Category</button>
+            <div id="dynamicCategoryList" class="category-list">
+                </div>
+            <button id="closeModalBtn" class="secondary">Close</button>
+        </div>
+    </div>
+
     <script src="taskManager.js"></script>
     <script src="script.js"></script>
 </body>
+
 </html>

@@ -38,10 +38,91 @@ document.addEventListener("DOMContentLoaded", () => {
     // progress
     const progressPercent = document.getElementById("progressPercent");
     const progressFill = document.getElementById("progressFill");
+    
+    // ⭐ Category Management Elements
+    const manageCategoryBtn = document.getElementById("manageCategoryBtn");
+    const categoryModal = document.getElementById("categoryModal");
+    const closeModalBtn = document.getElementById("closeModalBtn");
+    const newCategoryInput = document.getElementById("newCategoryInput");
+    const addCategoryBtn = document.getElementById("addCategoryBtn");
+    const dynamicCategoryList = document.getElementById("dynamicCategoryList");
 
     // state
     let editingTaskId = null;
     let selectedIds = new Set();
+    let draggedItem = null; // Drag and Drop State
+
+    // ⭐ Category Logic
+    const STATIC_CATEGORIES = ["", "Work", "Personal", "Study"]; // "" = General
+    let customCategories = JSON.parse(localStorage.getItem("customCategories")) || [];
+
+    function renderCategoryOptions() {
+        const allCategories = [...STATIC_CATEGORIES, ...customCategories];
+        const uniqueCategories = [...new Set(allCategories.filter(c => c !== ""))];
+
+        // 1. Task Form Options
+        const currentTaskCategory = taskCategory.value;
+        taskCategory.innerHTML = STATIC_CATEGORIES.map(c => 
+            `<option value="${c}" ${c === currentTaskCategory ? 'selected' : ''}>${c || 'General'}</option>`
+        ).join('');
+        taskCategory.innerHTML += uniqueCategories.filter(c => !STATIC_CATEGORIES.includes(c)).map(c => 
+            `<option value="${c}" ${c === currentTaskCategory ? 'selected' : ''}>${c}</option>`
+        ).join('');
+        
+        // 2. Filter Form Options
+        const currentFilterCategory = filterCategory.value;
+        filterCategory.innerHTML = `<option value="all">All</option>`;
+        filterCategory.innerHTML += uniqueCategories.map(c => 
+            `<option value="${c}" ${c === currentFilterCategory ? 'selected' : ''}>${c}</option>`
+        ).join('');
+        filterCategory.value = currentFilterCategory; 
+        
+        // 3. Manage Category List (Modal)
+        dynamicCategoryList.innerHTML = uniqueCategories.map(c => `
+            <div class="category-item">
+                <span>${c}</span>
+                <button class="danger" onclick="deleteCategory('${c}')" ${STATIC_CATEGORIES.includes(c) ? 'disabled' : ''}>Delete</button>
+            </div>
+        `).join('');
+    }
+
+    // Global deleteCategory function (called from modal button)
+    window.deleteCategory = (category) => {
+        if (STATIC_CATEGORIES.includes(category)) {
+            return alert("You cannot delete a default category.");
+        }
+        customCategories = customCategories.filter(c => c !== category);
+        localStorage.setItem("customCategories", JSON.stringify(customCategories));
+        renderCategoryOptions();
+        render(); 
+    };
+
+    // Category Modal Controls
+    manageCategoryBtn.addEventListener("click", () => {
+        categoryModal.classList.remove("hidden");
+        renderCategoryOptions();
+    });
+
+    closeModalBtn.addEventListener("click", () => {
+        categoryModal.classList.add("hidden");
+    });
+
+    addCategoryBtn.addEventListener("click", () => {
+        const newCat = newCategoryInput.value.trim();
+        if (!newCat) return;
+
+        const all = [...STATIC_CATEGORIES, ...customCategories];
+        if (all.map(c => c.toLowerCase()).includes(newCat.toLowerCase())) {
+            return alert("Category already exists.");
+        }
+
+        customCategories.push(newCat);
+        localStorage.setItem("customCategories", JSON.stringify(customCategories));
+        newCategoryInput.value = "";
+        renderCategoryOptions();
+        render();
+    });
+    // End Category Logic
 
     // default submit handler (Add)
     function defaultSubmit(e) {
@@ -118,7 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
         updateBulkButtons();
     }
 
-    // ⭐ Fix: Timezone-independent Overdue Check
+    // Fix: Timezone-independent Overdue Check
     function isOverdue(task) {
         if (!task.dueDate || task.completed) return false;
 
@@ -169,9 +250,8 @@ document.addEventListener("DOMContentLoaded", () => {
         bulkDeleteBtn.disabled = !any;
     }
 
-    // ⭐ Fix: Select only incomplete tasks
+    // Fix: Select only incomplete tasks
     selectAllBtn.addEventListener("click", () => {
-        // Only select tasks that are incomplete
         taskManager.tasks.filter(t => !t.completed).forEach(t => selectedIds.add(t.id));
         render(); // re-render to check boxes
     });
@@ -180,7 +260,7 @@ document.addEventListener("DOMContentLoaded", () => {
         render();
     });
 
-    // ⭐ Fix: Bulk Complete Logic (Recurrence Duplication Fix)
+    // Fix: Bulk Complete Logic (Uses toggleTaskCompletion for recurrence handling)
     bulkCompleteBtn.addEventListener("click", () => {
         if (!selectedIds.size) return;
         const ids = Array.from(selectedIds);
@@ -249,13 +329,123 @@ document.addEventListener("DOMContentLoaded", () => {
     filterCategory.addEventListener("change", render);
     sortTasks.addEventListener("change", render);
     searchTasks.addEventListener("input", render);
+    
+    // ⭐ Drag and Drop State and Logic
+    
+    // Custom Order Save function
+    function saveCustomOrder() {
+        const taskElements = taskList.querySelectorAll('.task-item');
+        const newOrderIds = Array.from(taskElements).map(el => parseInt(el.dataset.taskId));
+
+        // Update the actual taskManager.tasks array based on the new order
+        const orderedTasks = [];
+        newOrderIds.forEach(id => {
+            const task = taskManager.tasks.find(t => t.id === id);
+            if (task) {
+                orderedTasks.push(task);
+            }
+        });
+
+        taskManager.tasks = orderedTasks;
+        taskManager.saveTasks();
+    }
+
+    function setupDragAndDrop() {
+        const isCustomSort = sortTasks.value === 'custom';
+        // Only enable D&D if 'Custom Order' is selected
+        taskList.classList.toggle('draggable', isCustomSort);
+        
+        if (!isCustomSort) return;
+
+        const items = taskList.querySelectorAll('.task-item');
+        items.forEach(item => {
+            item.setAttribute('draggable', true);
+            
+            item.addEventListener('dragstart', (e) => {
+                draggedItem = e.currentTarget;
+                e.dataTransfer.effectAllowed = 'move';
+                e.currentTarget.classList.add('dragging');
+            });
+
+            item.addEventListener('dragover', (e) => {
+                e.preventDefault(); 
+                e.dataTransfer.dropEffect = 'move';
+                const bounding = e.currentTarget.getBoundingClientRect();
+                const offset = bounding.y + (bounding.height / 2);
+
+                // Determine if dragging above or below current item
+                e.currentTarget.classList.remove('drag-over-top', 'drag-over-bottom');
+                if (e.clientY < offset) {
+                    e.currentTarget.classList.add('drag-over-top');
+                } else {
+                    e.currentTarget.classList.add('drag-over-bottom');
+                }
+            });
+            
+            item.addEventListener('dragleave', (e) => {
+                e.currentTarget.classList.remove('drag-over-top', 'drag-over-bottom');
+            });
+            
+            item.addEventListener('drop', (e) => {
+                e.preventDefault();
+                
+                e.currentTarget.classList.remove('drag-over-top', 'drag-over-bottom');
+                
+                if (e.currentTarget === draggedItem) return;
+
+                const targetItem = e.currentTarget;
+                const parent = taskList;
+                
+                if (targetItem.classList.contains('drag-over-top')) {
+                    parent.insertBefore(draggedItem, targetItem);
+                } else if (targetItem.classList.contains('drag-over-bottom')) {
+                    parent.insertBefore(draggedItem, targetItem.nextSibling);
+                }
+
+                saveCustomOrder();
+            });
+
+            item.addEventListener('dragend', (e) => {
+                e.currentTarget.classList.remove('dragging');
+                draggedItem = null;
+                // Clean up all drag-over classes
+                taskList.querySelectorAll('.task-item').forEach(i => 
+                    i.classList.remove('drag-over-top', 'drag-over-bottom', 'dragging')
+                );
+            });
+        });
+    }
+
+    // ⭐ Task Count Logic
+    function updateTaskCounts() {
+        const allCount = document.getElementById("allCount");
+        const completedCount = document.getElementById("completedCount");
+        const overdueCount = document.getElementById("overdueCount");
+
+        const allTasks = taskManager.tasks;
+
+        // Filter: Hide completed recurring tasks from the main view count
+        const visibleTasks = allTasks.filter(t => !(t.completed && t.recurrence !== 'none')); 
+        
+        // Count Logic
+        const total = visibleTasks.filter(t => !t.completed).length; // Total incomplete visible tasks
+        const done = allTasks.filter(t => t.completed).length; // Total completed tasks (including hidden recurring ones)
+        const overdue = visibleTasks.filter(t => !t.completed && isOverdue(t)).length; // Overdue visible tasks
+
+        // UI Update
+        allCount.textContent = `All: ${total}`;
+        completedCount.textContent = `Done: ${done}`;
+        overdueCount.textContent = `Overdue: ${overdue}`;
+    }
+    // End Task Count Logic
+
 
     // main render
     function render() {
         // Start with ALL tasks for accurate sorting and filtering base
         let tasks = taskManager.filterTasks("all"); 
         
-        // ⭐ CRITICAL FIX: Filter out completed recurring tasks (This is why High Priority tasks appeared to stay)
+        // ⭐ CRITICAL FIX: Filter out completed recurring tasks (Fixes High Priority task bug)
         tasks = tasks.filter(t => !(t.completed && t.recurrence !== 'none')); 
 
         // 2. Apply filters based on dropdown
@@ -285,6 +475,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!tasks.length) {
             taskList.innerHTML = `<div class="small-muted">No tasks found.</div>`;
             updateProgress();
+            updateTaskCounts();
+            setupDragAndDrop();
             return;
         }
 
@@ -293,6 +485,7 @@ document.addEventListener("DOMContentLoaded", () => {
             item.className = "task-item enter";
             if (task.completed) item.classList.add("task-completed");
             if (isOverdue(task)) item.classList.add("task-overdue");
+            item.dataset.taskId = task.id; // ⭐ Drag and Drop Data ID
 
             // left column
             const left = document.createElement("div");
@@ -410,6 +603,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         updateProgress();
         updateBulkButtons();
+        updateTaskCounts(); // ⭐ Count update
+        setupDragAndDrop(); // ⭐ Drag and Drop setup
     }
 
     function updateProgress() {
@@ -426,5 +621,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // initial render
+    renderCategoryOptions(); // Initial load of category options
     render();
 });

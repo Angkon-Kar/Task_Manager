@@ -22,47 +22,39 @@ body { margin: 0; font-family: Inter, system-ui, -apple-system, "Segoe UI", Robo
 
 /* Form */
 .task-form { margin-bottom:16px; }
-.form-row { display:flex; gap:10px; align-items:center; margin-bottom:8px; }
-.form-row input[type="text"], .task-form textarea, .form-row select, .form-row input[type="date"] {
-    padding:10px; border:1px solid #dde6ef; border-radius:8px; background:#fff; font-size:14px; outline:none;
-}
-.task-form textarea { width:100%; min-height:64px; resize:vertical; }
-.form-row select { min-width:120px; }
-
-/* Buttons */
-button { cursor:pointer; border-radius:8px; border: none; padding:8px 12px; font-weight:600; transition:transform .12s ease, box-shadow .12s ease; }
-button:active { transform: translateY(1px); }
-button.secondary { background:#f1f6fb; color:#17406a; border:1px solid #e1edf7; }
-button.danger { background:#ffebee; color:#c62828; border:1px solid #fbcaca; }
-#submitBtn { background: linear-gradient(90deg,#1976d2,#0d47a1); color:#fff; }
-.hidden { display:none; }
+.form-row { display:flex; gap:10px; margin-bottom:10px; }
+.form-row input, .form-row select, .task-form textarea { padding:10px 12px; border:1px solid #ccc; border-radius:6px; font-size:16px; }
+.task-form input[type="text"], .task-form textarea { flex-grow:1; }
+.task-form textarea { min-height:60px; resize:vertical; }
+.task-form button { padding:10px 15px; border:none; border-radius:6px; cursor:pointer; font-weight:600; }
+#submitBtn { background:#1976d2; color:#fff; }
+#cancelEditBtn { background:#ccc; color:#333; }
+.hidden { display:none !important; }
 
 /* Controls */
-.task-controls { padding:12px 6px; display:flex; flex-direction:column; gap:8px; border-top:1px dashed #eef3f8; border-bottom:1px dashed #eef3f8; margin-bottom:12px; }
-.control-row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
-.control-row-2 { justify-content:space-between; }
-.control-row input[type="text"] { flex:1; }
+.task-controls { margin-bottom:16px; padding:10px; border:1px solid #eee; border-radius:8px; }
+.task-controls .control-row { display:flex; gap:10px; align-items:center; margin-bottom:8px; flex-wrap:wrap; }
+.task-controls .control-row-2 { margin-top:10px; }
+.task-controls label { font-weight:600; font-size:14px; color:#444; }
+.task-controls select { padding:8px 10px; border:1px solid #ccc; border-radius:6px; font-size:14px; }
+.task-controls input[type="text"] { flex-grow:1; }
+.bulk-actions { display:flex; gap:8px; }
+.bulk-actions button { padding:8px 10px; font-size:14px; }
+.secondary { background:#e9eef3; color:#444; }
+.danger { background:#f44336; color:#fff; }
 
-/* Task list */
-.task-list { display:flex; flex-direction:column; gap:10px; margin-top:12px; }
-.task-item {
-    display:flex; align-items:flex-start; gap:12px; padding:12px; border-radius:10px;
-    background: linear-gradient(180deg,#ffffff,#fbfdff);
-    box-shadow: 0 3px 8px rgba(12,20,30,0.04);
-    transform-origin: center; transition: transform .18s ease, opacity .18s ease;
-    opacity: 1;
-}
-.task-item.enter { animation: fadeIn .25s ease both; }
-@keyframes fadeIn { from { transform: translateY(6px); opacity:0 } to { transform: translateY(0); opacity:1 } }
+/* Task List */
+.task-list { display:flex; flex-direction:column; gap:8px; }
+.task-item { display:flex; justify-content:space-between; align-items:flex-start; padding:12px; border:1px solid #ddd; border-left:6px solid #1976d2; border-radius:8px; background:#fff; transition:all 300ms ease; }
+.task-item.enter { animation: fadeIn 300ms; }
+@keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
 
-/* Left column (checkbox + info) */
-.task-left { display:flex; align-items:flex-start; gap:12px; flex:1; }
-.task-left input[type="checkbox"] { width:18px; height:18px; margin-top:6px; }
-
-/* Info */
-.task-info { display:flex; flex-direction:column; gap:6px; min-width:0; }
-.task-title { display:flex; align-items:center; gap:8px; font-weight:700; font-size:15px; }
-.task-desc { color:#475569; font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+/* Task Content */
+.task-left { display:flex; gap:12px; align-items:flex-start; flex-grow:1; padding-right:15px; }
+.task-left input[type="checkbox"] { width:20px; height:20px; margin-top:2px; }
+.task-info { flex-grow:1; min-width:0; }
+.task-title { display:flex; align-items:center; gap:8px; font-weight:700; font-size:1rem; margin-bottom:4px; flex-wrap:wrap; }
+.task-desc { font-size:0.9rem; color:#667085; margin-bottom:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .task-meta { font-size:12px; color:#667085; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
 
 /* Badges */
@@ -80,50 +72,101 @@ button.danger { background:#ffebee; color:#c62828; border:1px solid #fbcaca; }
 
 /* Actions right */
 .task-actions { display:flex; gap:8px; align-items:center; }
-.task-actions button { padding:6px 10px; font-size:13px; border-radius:8px; }
+.task-actions button { padding:6px 10px; font-size:14px; }
 
 /* Footer */
-.footer { margin-top:18px; text-align:center; color:#596673; font-size:13px; }
+.footer { text-align:center; padding:10px 0 0; margin-top:10px; border-top:1px solid #eee; font-size:0.8rem; color:#667085; }
+.footer a { color:#1976d2; text-decoration:none; }
 
-/* Responsive */
-
-@media (max-width: 600px) {
-    .container {
-        margin: 0; /* Full width on tiny screens */
-        padding: 12px;
-        border-radius: 0; /* Remove rounded corners for full screen immersion */
-        box-shadow: none;
-    }
-
-    .task-item {
-        /* Improve vertical stacking of action buttons */
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .task-actions {
-        /* Make action buttons full width and stack them */
-        display: grid;
-        grid-template-columns: repeat(3, 1fr); /* 3 buttons evenly spaced */
-        gap: 8px; /* Reduce gap */
-        margin-top: 8px; /* Space from content */
-    }
-
-    .task-actions button {
-        width: 100%;
-    }
-
-    .control-row {
-        gap: 12px; /* Add some space between stacked controls */
-    }
-
-    /* Adjust bulk buttons to fit better */
-    .bulk-actions {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr); /* Two buttons per row */
-        gap: 8px;
-    }
+/* ⭐ Dynamic Category Modal Styles */
+.modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
+.modal-content {
+    background-color: #fefefe;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    width: 90%;
+    max-width: 400px;
+}
+#newCategoryInput { 
+    width: 100%;
+    margin-bottom: 8px;
+    padding: 8px;
+    box-sizing: border-box;
+}
+#addCategoryBtn {
+    background: #4caf50;
+    color: #fff;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+.category-list {
+    margin-top: 10px;
+    max-height: 150px;
+    overflow-y: auto;
+    border: 1px solid #eee;
+    padding: 8px;
+    border-radius: 6px;
+}
+.category-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    border-bottom: 1px dotted #eee;
+}
+.category-item:last-child { border-bottom: none; }
+.category-item button { 
+    padding: 3px 8px; 
+    font-size: 12px;
+}
+.modal-content h3 { margin-top: 0; }
 
-/* small helpers */
-.small-muted { color:#666; font-size:12px; }
+/* ⭐ Count Badges */
+.count-badge {
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-left: 4px;
+    background: #e9eef3;
+    color: #475569;
+}
+#overdueCount { 
+    background: #e53935;
+    color: #fff; 
+}
+.count-badge:empty { display: none; }
+
+
+/* ⭐ Drag and Drop Styles */
+.task-item[draggable="true"] {
+    cursor: move;
+}
+.task-item.dragging {
+    opacity: 0.3;
+}
+.task-item.drag-over-top {
+    border-top: 2px solid #1976d2;
+}
+.task-item.drag-over-bottom {
+    border-bottom: 2px solid #1976d2;
+}
+.task-list:not(.draggable) .task-item[draggable="true"] {
+    cursor: default; /* Drag cursor remove when not in custom sort mode */
+}
