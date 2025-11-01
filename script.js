@@ -607,19 +607,30 @@ document.addEventListener("DOMContentLoaded", () => {
         setupDragAndDrop(); // ⭐ Drag and Drop setup
     }
 
-    function updateProgress() {
-        const all = taskManager.tasks.length;
+function updateProgress() {
+        // নতুন লজিক: শুধুমাত্র রেলিভেন্ট টাস্কগুলো গণনা করা
+        
+        // 1. Recurring টাস্কের পুরোনো সম্পন্ন ইনস্ট্যান্সগুলো বাদ দিন 
+        // এই টাস্কগুলো শুধু হিস্টোরি হিসাবে থাকে, এগুলো প্রোগ্রেস কাউন্টে আসা উচিত নয়।
+        const relevantTasks = taskManager.tasks.filter(t => !(t.completed && t.recurrence !== 'none'));
+        
+        const all = relevantTasks.length;
         if (!all) {
             progressPercent.textContent = "0%";
             progressFill.style.width = "0%";
             return;
         }
-        const done = taskManager.tasks.filter(t => t.completed).length;
+        
+        // 2. মোট সম্পন্ন টাস্ক গণনা (relevantTasks এর মধ্যে)
+        const done = relevantTasks.filter(t => t.completed).length;
+        
         const pct = Math.round((done / all) * 100);
+        
+        // UI আপডেট
         progressPercent.textContent = `${pct}%`;
         progressFill.style.width = `${pct}%`;
     }
-
+    
     // initial render
     renderCategoryOptions(); // Initial load of category options
     render();
