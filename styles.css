@@ -54,7 +54,17 @@ body { margin: 0; font-family: Inter, system-ui, -apple-system, "Segoe UI", Robo
 .task-left input[type="checkbox"] { width:20px; height:20px; margin-top:2px; }
 .task-info { flex-grow:1; min-width:0; }
 .task-title { display:flex; align-items:center; gap:8px; font-weight:700; font-size:1rem; margin-bottom:4px; flex-wrap:wrap; }
-.task-desc { font-size:0.9rem; color:#667085; margin-bottom:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.task-desc { 
+    color:#475569; 
+    font-size:13px; 
+    overflow: hidden; 
+    white-space: normal; /* No longer force single line */
+    text-overflow: ellipsis; 
+    display: -webkit-box;
+    line-clamp: 2; /* Standard property for compatibility */
+    -webkit-line-clamp: 2; /* Maximum 2 lines before ellipsis */
+    -webkit-box-orient: vertical;
+}
 .task-meta { font-size:12px; color:#667085; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
 
 /* Badges */
@@ -156,10 +166,11 @@ body { margin: 0; font-family: Inter, system-ui, -apple-system, "Segoe UI", Robo
 
 /* ⭐ Drag and Drop Styles */
 .task-item[draggable="true"] {
-    cursor: move;
+    cursor: grab;
 }
 .task-item.dragging {
-    opacity: 0.3;
+    opacity: 0.5;
+    transform: scale(1.02);
 }
 .task-item.drag-over-top {
     border-top: 2px solid #1976d2;

@@ -87,22 +87,23 @@ class TaskManager {
         return this.tasks;
     }
 
+
     sortTasks(by = "date") {
         // Sorting mutates tasks array (so UI order persists)
         if (by === "priority") {
-            const order = { 'high': 3, 'medium': 2, 'low': 1 };
-            this.tasks.sort((a, b) => order[b.priority] - order[a.priority]);
+            const order = { high: 1, medium: 2, low: 3 };
+            this.tasks.sort((a, b) => (order[a.priority] || 99) - (order[b.priority] || 99));
         } else if (by === "date") {
+            // tasks with no due date go last
             this.tasks.sort((a, b) => {
-                const dateA = a.dueDate || "9999-12-31";
-                const dateB = b.dueDate || "9999-12-31";
-                return dateA.localeCompare(dateB);
+                const A = a.dueDate ? new Date(a.dueDate).getTime() : Infinity;
+                const B = b.dueDate ? new Date(b.dueDate).getTime() : Infinity;
+                return A - B;
             });
         } else if (by === "created") {
-            this.tasks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        } else if (by === "custom") {
-            // ⭐ Custom Order: Do nothing, the tasks array is already in the custom order set by Drag and Drop
-            return;
+            this.tasks.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        } else if (by === "custom") { 
+            // Do nothing; maintain the existing order set by drag and drop
         }
         this.saveTasks();
     }
